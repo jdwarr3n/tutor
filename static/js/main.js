@@ -4,8 +4,22 @@ require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-e
 let editor;
 let traceData = [];
 let currentStep = 0;
-
 let currentDecorations = [];
+
+// Pyodide Initialization
+let pyodidePromise = (async () => {
+    const pyodide = await loadPyodide({
+        indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/"
+    });
+
+    // Load tracer module
+    const response = await fetch('backend/tracer.py');
+    const tracerCode = await response.text();
+    pyodide.FS.writeFile('tracer.py', tracerCode);
+
+    // Install any necessary packages (none for now as we use standard lib)
+    return pyodide;
+})();
 
 require(['vs/editor/editor.main'], function () {
     editor = monaco.editor.create(document.getElementById('editor-container'), {
@@ -49,7 +63,6 @@ fileInput.addEventListener('change', (e) => {
     const reader = new FileReader();
     reader.onload = (e) => {
         editor.setValue(e.target.result);
-        // Reset visualization when new code is loaded
         traceData = [];
         currentStep = 0;
         updateVisualization();
@@ -59,29 +72,33 @@ fileInput.addEventListener('change', (e) => {
 
 visualizeBtn.addEventListener('click', async () => {
     const code = editor.getValue();
+    visualizeBtn.disabled = true;
+    visualizeBtn.textContent = 'Running...';
 
     try {
-        visualizeBtn.disabled = true;
-        visualizeBtn.textContent = 'Running...';
+        const pyodide = await pyodidePromise;
 
-        const response = await fetch('/trace', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code })
-        });
+        // Pass user code to Python
+        pyodide.globals.set('user_code', code);
 
-        const data = await response.json();
+        // Run tracer and get JSON result
+        const runScript = `
+import tracer
+import json
+import importlib
+importlib.reload(tracer) # Reload to ensure fresh state if needed
 
-        if (data.error) {
-            alert('Error: ' + data.error);
-            return;
-        }
+trace = tracer.trace_code(user_code)
+json.dumps(trace)
+`;
+        const resultJson = await pyodide.runPythonAsync(runScript);
+        traceData = JSON.parse(resultJson);
 
-        traceData = data.trace;
         currentStep = 0;
         updateVisualization();
 
     } catch (e) {
+        console.error(e);
         alert('Failed to execute code: ' + e.message);
     } finally {
         visualizeBtn.disabled = false;
