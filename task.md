@@ -82,3 +82,8 @@
     - [x] Connect Frontend to Backend API (Fetch API) <!-- id: 13 -->
     - [x] Verify with simple Python scripts (loops, functions) <!-- id: 14 -->
     - [x] Verify with complex scripts (recursion, objects) <!-- id: 15 -->
+- [x] Client-Side Migration (Pyodide)
+    - [x] Remove Flask Backend
+    - [x] Integrate Pyodide in Frontend
+    - [x] Update Tracer to run in Browser
+    - [x] Deploy to GitHub Pages
