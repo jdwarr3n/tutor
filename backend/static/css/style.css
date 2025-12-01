@@ -168,3 +168,92 @@ h3 {
     font-size: 0.9rem;
     color: #495057;
 }
+
+/* Layout for Stack and Heap */
+#visualization-content {
+    display: flex;
+    flex: 1;
+    gap: 1rem;
+    min-height: 300px;
+}
+
+.stack-column,
+.heap-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.heap-column {
+    border-left: 1px solid var(--border-color);
+    padding-left: 1rem;
+    overflow-x: auto;
+}
+
+#heap-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    align-items: start;
+    width: 100%;
+}
+
+.heap-object {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin-bottom: 0;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    /* ID on top, value row below */
+    align-items: flex-start;
+}
+
+.heap-id {
+    font-size: 0.75rem;
+    color: #adb5bd;
+    margin-bottom: 0.25rem;
+    align-self: flex-start;
+}
+
+.heap-value {
+    display: flex;
+    flex-direction: row;
+    /* Items in a row */
+    gap: 0;
+    /* Connect borders */
+    color: #495057;
+}
+
+.heap-list-item,
+.heap-dict-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 2px;
+}
+
+.heap-item-index,
+.heap-dict-key {
+    font-size: 0.7rem;
+    color: #6c757d;
+    margin-bottom: 2px;
+}
+
+.heap-item-box {
+    border: 1px solid #495057;
+    padding: 4px 8px;
+    background: #fff;
+    min-width: 30px;
+    text-align: center;
+    position: relative;
+    /* For reference dot positioning if needed */
+}
+
+/* Remove border-bottom from previous implementation */
+.heap-list-item:last-child {
+    border-bottom: none;
+}

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -8,6 +9,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <!-- Monaco Editor Loader -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js"></script>
+    <!-- LeaderLine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leader-line/1.0.7/leader-line.min.js"></script>
 </head>
 
 <body>
@@ -36,18 +39,26 @@
                 </div>
 
                 <div id="visualization-content">
-                    <div class="section">
-                        <h3>Globals</h3>
-                        <div id="globals-view"></div>
+                    <div class="stack-column">
+                        <div class="section">
+                            <h3>Globals</h3>
+                            <div id="globals-view"></div>
+                        </div>
+                        <div class="section">
+                            <h3>Locals</h3>
+                            <div id="locals-view"></div>
+                        </div>
                     </div>
-                    <div class="section">
-                        <h3>Locals</h3>
-                        <div id="locals-view"></div>
+                    <div class="heap-column">
+                        <div class="section">
+                            <h3>Heap</h3>
+                            <div id="heap-view"></div>
+                        </div>
                     </div>
-                    <div class="section">
-                        <h3>Output</h3>
-                        <pre id="stdout-view"></pre>
-                    </div>
+                </div>
+                <div class="section" style="border-top: 1px solid #dee2e6; padding-top: 1rem;">
+                    <h3>Output</h3>
+                    <pre id="stdout-view"></pre>
                 </div>
             </div>
         </main>

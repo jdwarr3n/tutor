@@ -10,14 +10,12 @@ let currentDecorations = [];
 require(['vs/editor/editor.main'], function () {
     editor = monaco.editor.create(document.getElementById('editor-container'), {
         value: [
-            'def factorial(n):',
-            '    if n == 0:',
-            '        return 1',
-            '    else:',
-            '        return n * factorial(n-1)',
+            'x = [1, 2, 3]',
+            'y = [x, x]',
             '',
-            'x = factorial(3)',
-            'print(x)'
+            'x[1] = 4',
+            '',
+            'print(y)'
         ].join('\n'),
         language: 'python',
         minimap: { enabled: false },
@@ -146,12 +144,7 @@ function updateVisualization() {
     // Render Stack Frames
     localsView.innerHTML = ''; // Clear previous frames
 
-    // Reverse stack for display if needed, but Python Tutor usually shows 
-    // Top-level (Globals) -> Function Calls -> Current Frame (Bottom)
-    // Our stack is already ordered [Module, Func1, Func2...] from the backend
-
     step.stack.forEach((frame, index) => {
-        // Skip module level frame if it's just globals (optional, but cleaner)
         if (frame.func_name === '<module>') return;
 
         const frameDiv = document.createElement('div');
@@ -169,8 +162,119 @@ function updateVisualization() {
         localsView.appendChild(frameDiv);
     });
 
+    // Render Heap
+    renderHeap(step.heap);
+
+    // Draw Arrows (after a slight delay to ensure DOM is ready)
+    setTimeout(drawArrows, 50);
+
     // Render Stdout
     stdoutView.textContent = step.stdout || '';
+}
+
+let arrows = [];
+
+function drawArrows() {
+    // Remove existing arrows
+    arrows.forEach(arrow => arrow.remove());
+    arrows = [];
+
+    // Find all references
+    const refs = document.querySelectorAll('[data-ref-id]');
+    refs.forEach(refEl => {
+        const id = refEl.dataset.refId;
+        const targetEl = document.getElementById(`heap-${id}`);
+
+        if (targetEl) {
+            try {
+                const arrow = new LeaderLine(
+                    refEl,
+                    targetEl,
+                    {
+                        color: '#6c757d',
+                        size: 2,
+                        path: 'straight',
+                        startSocket: 'right',
+                        endSocket: 'left'
+                    }
+                );
+                arrows.push(arrow);
+            } catch (e) {
+                console.error('Error drawing arrow:', e);
+            }
+        }
+    });
+}
+
+function renderHeap(heap) {
+    const heapView = document.getElementById('heap-view');
+    heapView.innerHTML = '';
+
+    if (!heap) return;
+
+    // Heap is now an array of objects: [{id: '...', type: '...', value: ...}, ...]
+    heap.forEach(obj => {
+        const id = obj.id;
+
+        const objDiv = document.createElement('div');
+        objDiv.className = 'heap-object';
+        objDiv.id = `heap-${id}`;
+
+        const idDiv = document.createElement('div');
+        idDiv.className = 'heap-id';
+        // Shorten ID to last 4 digits
+        idDiv.textContent = `id: ...${id.slice(-4)}`;
+        objDiv.appendChild(idDiv);
+
+        const valueDiv = document.createElement('div');
+        valueDiv.className = 'heap-value';
+
+        if (obj.type === 'list' || obj.type === 'tuple' || obj.type === 'set') {
+            obj.value.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'heap-list-item';
+
+                const indexDiv = document.createElement('div');
+                indexDiv.className = 'heap-item-index';
+                indexDiv.textContent = index;
+
+                const valDiv = document.createElement('div');
+                valDiv.className = 'heap-item-box';
+                if (item && item.type === 'ref') {
+                    valDiv.textContent = '•';
+                    valDiv.dataset.refId = item.id;
+                } else {
+                    valDiv.textContent = item;
+                }
+
+                itemDiv.appendChild(indexDiv);
+                itemDiv.appendChild(valDiv);
+                valueDiv.appendChild(itemDiv);
+            });
+        } else if (obj.type === 'dict') {
+            obj.value.forEach(([k, v]) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'heap-dict-item';
+
+                const keyDiv = document.createElement('div');
+                keyDiv.className = 'heap-dict-key';
+                keyDiv.textContent = k;
+
+                const valDiv = document.createElement('div');
+                valDiv.className = 'heap-item-box';
+                valDiv.textContent = v; // Simplified for now
+
+                itemDiv.appendChild(keyDiv);
+                itemDiv.appendChild(valDiv);
+                valueDiv.appendChild(itemDiv);
+            });
+        } else {
+            valueDiv.textContent = obj.value;
+        }
+
+        objDiv.appendChild(valueDiv);
+        heapView.appendChild(objDiv);
+    });
 }
 
 function renderVariables(container, variables) {
@@ -191,10 +295,20 @@ function renderVariables(container, variables) {
 
         const valueSpan = document.createElement('span');
         valueSpan.className = 'var-value';
-        valueSpan.textContent = value;
+
+        if (value && value.type === 'ref') {
+            valueSpan.textContent = '•'; // Dot for reference
+            valueSpan.dataset.refId = value.id;
+        } else {
+            valueSpan.textContent = value;
+        }
 
         row.appendChild(nameSpan);
         row.appendChild(valueSpan);
         container.appendChild(row);
     }
 }
+
+window.addEventListener('resize', () => {
+    drawArrows();
+});

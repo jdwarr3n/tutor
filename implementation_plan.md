@@ -51,6 +51,17 @@ Handles:
 #### [NEW] `backend/static/css/style.css`
 Basic layout and styling for the visualization.
 
+### Experimental: Reference Diagrams (Heap Visualization)
+-   **Backend**:
+    -   Modify `Tracer` to track unique object IDs (`id(obj)`).
+    -   Separate `heap` dictionary in trace step.
+    -   Serialize mutable objects (lists, dicts) into `heap` and store `{type: 'ref', id: ...}` in stack.
+-   **Frontend**:
+    -   Add `leader-line` library via CDN.
+    -   Create a "Heap" column in the visualization pane.
+    -   Render Heap objects as boxes.
+    -   Draw arrows from Stack variables to Heap objects using `LeaderLine`.
+
 ## Verification Plan
 
 ### Automated Tests
