@@ -1,0 +1,170 @@
+:root {
+    --bg-color: #f8f9fa;
+    --border-color: #dee2e6;
+    --primary-color: #0d6efd;
+    --text-color: #212529;
+    --highlight-bg: #fff3cd;
+    --highlight-border: #ffc107;
+    --frame-bg: #e9ecef;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+header {
+    padding: 1rem;
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.split-view {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.editor-pane,
+.visualization-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border-color);
+}
+
+.visualization-pane {
+    background: white;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+#editor-container {
+    flex: 1;
+    width: 100%;
+}
+
+.controls-bar {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+button {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+button#visualizeBtn {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.section {
+    margin-bottom: 1.5rem;
+}
+
+h3 {
+    margin-top: 0;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.variable-row {
+    display: flex;
+    padding: 0.25rem 0;
+    font-family: monospace;
+}
+
+.var-name {
+    font-weight: bold;
+    color: #d63384;
+    margin-right: 0.5rem;
+}
+
+.var-value {
+    color: #198754;
+}
+
+#stdout-view {
+    background: #f8f9fa;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    min-height: 50px;
+    white-space: pre-wrap;
+}
+
+/* Line Highlighting */
+.myLineDecoration {
+    background: var(--highlight-bg);
+    border: 1px solid var(--highlight-border);
+}
+
+/* Glyph Margin Arrow */
+.myGlyphMarginClass {
+    background: transparent;
+    width: 0 !important;
+    height: 0 !important;
+    border-left: 10px solid var(--primary-color);
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    margin-left: 5px;
+    margin-top: 2px;
+}
+
+/* Stack Frames */
+.stack-frame {
+    background: var(--frame-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.frame-title {
+    font-weight: bold;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #495057;
+}

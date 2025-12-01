@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Tutor Clone</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Monaco Editor Loader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Python Tutor Clone</h1>
+            <div class="controls">
+                <input type="file" id="fileInput" accept=".py" style="display: none;">
+                <button id="loadBtn">Load File</button>
+                <button id="visualizeBtn">Visualize Execution</button>
+            </div>
+        </header>
+
+        <main class="split-view">
+            <div class="editor-pane">
+                <div id="editor-container"></div>
+            </div>
+
+            <div class="visualization-pane">
+                <div class="controls-bar">
+                    <button id="firstBtn" disabled>&lt;&lt; First</button>
+                    <button id="prevBtn" disabled>&lt; Prev</button>
+                    <span id="stepDisplay">Step 0 of 0</span>
+                    <button id="nextBtn" disabled>Next &gt;</button>
+                    <button id="lastBtn" disabled>Last &gt;&gt;</button>
+                </div>
+
+                <div id="visualization-content">
+                    <div class="section">
+                        <h3>Globals</h3>
+                        <div id="globals-view"></div>
+                    </div>
+                    <div class="section">
+                        <h3>Locals</h3>
+                        <div id="locals-view"></div>
+                    </div>
+                    <div class="section">
+                        <h3>Output</h3>
+                        <pre id="stdout-view"></pre>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>
